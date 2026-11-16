@@ -2,8 +2,6 @@ import { useEffect, useRef } from 'react'
 import { gsap } from 'gsap'
 import gokuVideo from '../assets/goku.mp4'
 
-const VIDEO_WIDTH = 180
-const VIDEO_HEIGHT = 120
 const CURSOR_GAP = 20
 
 export default function MouseFollower() {
@@ -15,26 +13,30 @@ export default function MouseFollower() {
 
     const moveX = gsap.quickTo(video, 'x', { duration: 0.3, ease: 'power3.out' })
     const moveY = gsap.quickTo(video, 'y', { duration: 0.3, ease: 'power3.out' })
+    let hasPositioned = false
 
     const onPointerMove = (event) => {
-      moveX(event.clientX - VIDEO_WIDTH - CURSOR_GAP)
-      moveY(Math.min(
-        Math.max(event.clientY - VIDEO_HEIGHT / 2, 8),
-        Math.max(8, window.innerHeight - VIDEO_HEIGHT - 8),
-      ))
-      gsap.to(video, { autoAlpha: 1, duration: 0.15, overwrite: true })
-    }
+      const x = event.clientX - video.offsetWidth - CURSOR_GAP
+      const y = Math.min(
+        Math.max(event.clientY - video.offsetHeight / 2, 8),
+        Math.max(8, window.innerHeight - video.offsetHeight - 8),
+      )
 
-    const onPointerLeave = () => {
-      gsap.to(video, { autoAlpha: 0, duration: 0.15, overwrite: true })
+      // Put the video beside the pointer immediately, then ease each movement.
+      if (!hasPositioned) {
+        gsap.set(video, { x, y, autoAlpha: 1 })
+        hasPositioned = true
+        return
+      }
+
+      moveX(x)
+      moveY(y)
     }
 
     window.addEventListener('pointermove', onPointerMove)
-    document.documentElement.addEventListener('pointerleave', onPointerLeave)
 
     return () => {
       window.removeEventListener('pointermove', onPointerMove)
-      document.documentElement.removeEventListener('pointerleave', onPointerLeave)
       gsap.killTweensOf(video)
     }
   }, [])
