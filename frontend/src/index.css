@@ -1,0 +1,47 @@
+@import "tailwindcss";
+
+/* Computer Modern is commonly installed with TeX; use Latin Modern as its
+   web-friendly companion when available, then fall back to a classic serif. */
+html,
+body,
+#root {
+  font-family: "Computer Modern Roman", "Latin Modern Roman", "CMU Serif",
+    "Times New Roman", serif;
+}
+
+.mouse-follower-video {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 50;
+  width: 180px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 12px;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform;
+}
+
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .a4-page {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 0;
+    box-shadow: none;
+    break-after: page;
+  }
+}
